@@ -144,11 +144,13 @@ class Fade_Words {
 }
 
 class Cycle {
-  constructor(radius, newArc, prevArc, onCycle){
+  constructor(radius, newArc, prevArc, onCycle, onTop){
     this.radius = radius
 
     this.newArc = newArc
     this.prevArc = prevArc
+
+    this.onTop = onTop
 
     this.pause = false
     this.frames = 0
@@ -157,10 +159,10 @@ class Cycle {
     this.opacity = 0
     this.day = true
 
-    this.atCycle = 1 // 1 = day, 2 = dusk, 3 = night, 4 = dawn, then resets
-    this.tracker = 1
+    this.originalCycle = onCycle
+    this.tracker = 180
     this.onCycle = onCycle
-
+    this.transition = false
 
   }
   draw(){
@@ -184,25 +186,35 @@ class Cycle {
       gradient.addColorStop(0.42, `rgb(${dayAry[2].r},${dayAry[2].g},${dayAry[2].b})`);
       gradient.addColorStop(1, `rgb(${dayAry[3].r},${dayAry[3].g},${dayAry[3].b})`);
     }
-    if(this.onCycle == 2){
-      gradient.addColorStop(0, `rgb(${(duskAry[0].r-nightAry[0].r)/-180 * this.tracker + duskAry[0].r},
-                                    ${(duskAry[0].g-nightAry[0].g)/-180 * this.tracker + duskAry[0].g},
-                                    ${(duskAry[0].b-nightAry[0].b)/-180 * this.tracker + duskAry[0].b})`);
+    if(this.onCycle == 2 && this.onTop == false){ this.onCycle = 1 }
+    if(this.onCycle == 2 && this.onTop == true){
+      if(this.transition == false){
+        this.transition = true
+        this.tracker = 1
 
-      gradient.addColorStop(0.24, `rgb(${(duskAry[1].r-nightAry[1].r)/-180 * this.tracker + duskAry[1].r},
-                                       ${(duskAry[1].g-nightAry[1].g)/-180 * this.tracker + duskAry[1].g},
-                                       ${(duskAry[1].b-nightAry[1].b)/-180 * this.tracker + duskAry[1].b})`);
-
-      gradient.addColorStop(0.42, `rgb(${(duskAry[2].r-nightAry[2].r)/-180 * this.tracker + duskAry[2].r},
-                                       ${(duskAry[2].g-nightAry[2].g)/-180 * this.tracker + duskAry[2].g},
-                                       ${(duskAry[2].b-nightAry[2].b)/-180 * this.tracker + duskAry[2].b})`);
-
-      gradient.addColorStop(1, `rgb(${(duskAry[3].r-nightAry[3].r)/-180 * this.tracker + duskAry[3].r},
-                                    ${(duskAry[3].g-nightAry[3].g)/-180 * this.tracker + duskAry[3].g},
-                                    ${(duskAry[3].b-nightAry[3].b)/-180 * this.tracker + duskAry[3].b})`);
-      if(this.tracker <= 180 && this.frames > 500){
-        this.tracker += 2
       }
+
+      gradient.addColorStop(0, `rgb(${(dayAry[0].r-nightAry[0].r)/-180 * this.tracker + dayAry[0].r},
+                                    ${(dayAry[0].g-nightAry[0].g)/-180 * this.tracker + dayAry[0].g},
+                                    ${(dayAry[0].b-nightAry[0].b)/-180 * this.tracker + dayAry[0].b})`);
+
+      gradient.addColorStop(0.24, `rgb(${(dayAry[1].r-nightAry[1].r)/-180 * this.tracker + dayAry[1].r},
+                                       ${(dayAry[1].g-nightAry[1].g)/-180 * this.tracker + dayAry[1].g},
+                                       ${(dayAry[1].b-nightAry[1].b)/-180 * this.tracker + dayAry[1].b})`);
+
+      gradient.addColorStop(0.42, `rgb(${(dayAry[2].r-nightAry[2].r)/-180 * this.tracker + dayAry[2].r},
+                                       ${(dayAry[2].g-nightAry[2].g)/-180 * this.tracker + dayAry[2].g},
+                                       ${(dayAry[2].b-nightAry[2].b)/-180 * this.tracker + dayAry[2].b})`);
+
+      gradient.addColorStop(1, `rgb(${(dayAry[3].r-nightAry[3].r)/-180 * this.tracker + dayAry[3].r},
+                                    ${(dayAry[3].g-nightAry[3].g)/-180 * this.tracker + dayAry[3].g},
+                                    ${(dayAry[3].b-nightAry[3].b)/-180 * this.tracker + dayAry[3].b})`);
+      if(this.tracker <= 180 && this.frames > 500){
+        this.tracker += 1
+
+      }
+
+
 
     }
 
@@ -212,12 +224,36 @@ class Cycle {
       gradient.addColorStop(0.42, `rgb(${nightAry[2].r},${nightAry[2].g},${nightAry[2].b})`);
       gradient.addColorStop(1, `rgb(${nightAry[3].r},${nightAry[3].g},${nightAry[3].b})`);
     }
+    if(this.onCycle == 4 && this.onTop == false){ this.onCycle = 3 }
+    if(this.onCycle == 4 && this.onTop == true){
+      if(this.transition == false){
 
-    if(this.onCycle == 4){
-      gradient.addColorStop(0, `rgb(${dawnAry[0].r},${dawnAry[0].g},${dawnAry[0].b})`);
-      gradient.addColorStop(0.24, `rgb(${dawnAry[1].r},${dawnAry[1].g},${dawnAry[1].b})`);
-      gradient.addColorStop(0.42, `rgb(${dawnAry[2].r},${dawnAry[2].g},${dawnAry[2].b})`);
-      gradient.addColorStop(1, `rgb(${dawnAry[3].r},${dawnAry[3].g},${dawnAry[3].b})`);
+        this.transition = true
+        this.tracker = 1
+      }
+
+      gradient.addColorStop(0, `rgb(${(nightAry[0].r-dayAry[0].r)/-180 * this.tracker + nightAry[0].r},
+                                    ${(nightAry[0].g-dayAry[0].g)/-180 * this.tracker + nightAry[0].g},
+                                    ${(nightAry[0].b-dayAry[0].b)/-180 * this.tracker + nightAry[0].b})`);
+
+      gradient.addColorStop(0.24, `rgb(${(nightAry[1].r-dayAry[1].r)/-180 * this.tracker + nightAry[1].r},
+                                       ${(nightAry[1].g-dayAry[1].g)/-180 * this.tracker + nightAry[1].g},
+                                       ${(nightAry[1].b-dayAry[1].b)/-180 * this.tracker + nightAry[1].b})`);
+
+      gradient.addColorStop(0.42, `rgb(${(nightAry[2].r-dayAry[2].r)/-180 * this.tracker + nightAry[2].r},
+                                       ${(nightAry[2].g-dayAry[2].g)/-180 * this.tracker + nightAry[2].g},
+                                       ${(nightAry[2].b-dayAry[2].b)/-180 * this.tracker + nightAry[2].b})`);
+
+      gradient.addColorStop(1, `rgb(${(nightAry[3].r-dayAry[3].r)/-180 * this.tracker + nightAry[3].r},
+                                    ${(nightAry[3].g-dayAry[3].g)/-180 * this.tracker + nightAry[3].g},
+                                    ${(nightAry[3].b-dayAry[3].b)/-180 * this.tracker + nightAry[3].b})`);
+      if(this.tracker <= 180 && this.frames > 500){
+        this.tracker += 1
+
+      }
+
+
+
     }
 
     c.fillStyle = gradient
@@ -227,9 +263,7 @@ class Cycle {
 
     if(this.frames > 500){
       if(this.frames == 501){
-        if(this.onCycle == 4){ this.onCycle = 0 }
-        else{ this.onCycle += 1 }
-
+        this.onCycle += 1
       }
       if(this.newArc > Math.PI * 2){
         this.newArc = 0
@@ -245,9 +279,9 @@ class Cycle {
       this.timer += 1
       if(this.timer >= 180){
         this.day = !this.day
-
-        if(this.onCycle == 4){ this.onCycle = 0 }
-        else{ this.onCycle += 1 }
+        this.onTop = !this.onTop
+        this.onCycle = this.originalCycle
+        this.transition = false
 
         if(this.newArc >= Math.PI / 2 && this.newArc < Math.PI * 1.75){
           this.newArc = Math.PI
@@ -432,8 +466,8 @@ function setup(){
     }
   }
   cycleAry = []
-  cycleAry.push(new Cycle(1500, Math.PI, 0, 3))
-  cycleAry.push(new Cycle(1500, 0, Math.PI, 1))
+  cycleAry.push(new Cycle(1500, Math.PI, 0, 3, false))
+  cycleAry.push(new Cycle(1500, 0, Math.PI, 1, true))
 
   //starAry.push(new Cycle(1500,'yellow',0,Math.PI))
 
