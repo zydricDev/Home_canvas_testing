@@ -13,11 +13,11 @@ class Gradient{
 }
 
 class Pop_Words {
-  constructor(ltr, x, y, opac, size, doResize){
+  constructor(ltr, x, y, size, doResize){
       this.ltr = ltr
       this.x = x
       this.y = y
-      this.opac = opac
+      this.opac = 0
 
       this.size = size
 
@@ -34,9 +34,12 @@ class Pop_Words {
 
   draw(){
     //&& this.opacDelay >= 0
-    if(this.day == false){
-      c.fillStyle = "black";
-    }else {c.fillStyle = "white";}
+    //if(this.day == false){
+    if(sentenceAry[sentenceAry.length-1].drawn == true){
+      c.fillStyle = "white";
+    }else{c.fillStyle = "black";}
+
+    //}else {c.fillStyle = "blue";}
 
     if(cycleAry[0].frames == 550){
       this.day = !this.day
@@ -124,7 +127,7 @@ class Fade_Words {
   }
 
   draw(){
-
+    c.fillStyle = "white";
     if(this.opac < 1 && this.drawn == false){
       this.opac += 0.03
     }
@@ -134,7 +137,7 @@ class Fade_Words {
     c.globalAlpha =  this.opac
     c.font = this.size+'px Bungee'
     c.fillText(this.ltr, this.x, this.y, 500)
-
+    c.fillStyle = "black";
   }
 
   update(){
@@ -453,17 +456,36 @@ class City{
 }
 
 class Text_Background{
-  constructor(x,y,color,height,width){
+  constructor(x,y,color,height,width, offset){
     this.x = x
     this.y = y
     this.color = color
     this.height = height
     this.width = width
+    this.offset = offset
   }
   draw(){
     c.beginPath()
     c.fillStyle = this.color
-    c.fillRect(this.x, this.y, this.height, this.width)
+
+    c.moveTo(this.x,this.y) // 1
+    c.lineTo(this.x + this.width - 5, this.y + 20)
+    c.lineTo(this.x + this.width, this.y + this.height / 5) //3
+    c.lineTo(-this.offset*2.5 + this.x + this.width + this.width / 20, -this.offset + this.y + this.height / 4.286) //4 20:70
+    c.lineTo(-this.offset*2.5 + this.x + this.width + this.width / 20, -this.offset + this.y + this.height / 6) //5 20:50
+    c.lineTo(-this.offset + this.x + this.width + this.width / 6.67, this.y + this.height / 3.75) //6 60:80
+    c.lineTo(-this.offset + this.x + this.width + this.width / 11.43, this.offset * 1.5 + this.y + this.height / 4.286) // 7 35:70
+    c.lineTo(-this.offset + this.x + this.width + this.width / 10, this.y + this.height / 3) //8 40:100
+    c.lineTo(this.x + this.width + this.width / 80, this.offset + this.y + this.height / 3.33) // 9 5:90
+    c.lineTo(this.x + this.width + this.width / 16, this.y + this.height - this.height / 7.5)
+    c.lineTo(this.x + 10, this.y + this.height)
+    c.lineTo(this.x,this.y)
+
+
+    c.strokeStyle = "transparent";
+    c.stroke()
+    c.fill()
+    //c.fillRect(this.x, this.y, this.height, this.width)
     //c.fillRect(-50,-50,400,300)
     c.closePath()
   }
@@ -472,42 +494,44 @@ class Text_Background{
   }
 }
 
-let sentenceAry = []
-let words = "Hi,I'm Zydric,web developer"
-let sub = 0
-let starAry
-
-
 
 function setup(){
+  var sub = 0
+  sentenceAry = []
+  starAry = []
+  words = "Hi,I'm Zydric,web developer"
 
+  desc = "Megamind was a great movie"
+  description = new Fade_Words(desc, 0, 150, 0, 15, false)
 
+  word_offset_X = 0
+  word_offset_Y = 0
   for(var i=0; i<words.length; i++){
 
     if(i==0){
-      sentenceAry.push(new Pop_Words(words.charAt(i), i*10, 0, 0, 30, true))
+      sentenceAry.push(new Pop_Words(words.charAt(i), i*10+word_offset_X, 0+word_offset_Y, 30, true))
     }else{
       if(i < 3){
         if(i == 2){
-          sentenceAry.push(new Pop_Words(words.charAt(i), i*19, 0, 0, 30, false))
+          sentenceAry.push(new Pop_Words(words.charAt(i), i*19+word_offset_X, 0+word_offset_Y, 30, false))
         }else{
-          sentenceAry.push(new Pop_Words(words.charAt(i), i*20, 0, 0, 30, false))
+          sentenceAry.push(new Pop_Words(words.charAt(i), i*20+word_offset_X, 0+word_offset_Y, 30, false))
         }
       }
 
       if(i >= 3 && i < 14){
         if(i == 4){
-          sentenceAry.push(new Pop_Words(words.charAt(i), sub-5, 50, 0, 30, false))
+          sentenceAry.push(new Pop_Words(words.charAt(i), sub-5+word_offset_X, 50+word_offset_Y, 30, false))
         }else{
           if(i == 5){
-            sentenceAry.push(new Pop_Words(words.charAt(i), sub+3, 50, 0, 30, false))
+            sentenceAry.push(new Pop_Words(words.charAt(i), sub+3+word_offset_X, 50+word_offset_Y, 30, false))
             sub += 20
           }else{
             if(i == 12){
-              sentenceAry.push(new Pop_Words(words.charAt(i), sub-3, 50, 0, 30, false))
+              sentenceAry.push(new Pop_Words(words.charAt(i), sub-3+word_offset_X, 50+word_offset_Y, 30, false))
               sub += 15
             }else{
-              sentenceAry.push(new Pop_Words(words.charAt(i), sub, 50, 0, 30, false))
+              sentenceAry.push(new Pop_Words(words.charAt(i), sub+word_offset_X, 50+word_offset_Y, 30, false))
               sub += 20
             }
           }
@@ -519,10 +543,10 @@ function setup(){
           sub = 0
         }
         if(i == 15){
-          sentenceAry.push(new Pop_Words(words.charAt(i), sub+3, 100, 0, 30, false))
+          sentenceAry.push(new Pop_Words(words.charAt(i), sub+3+word_offset_X, 100+word_offset_Y, 30, false))
           sub += 21
         }else{
-          sentenceAry.push(new Pop_Words(words.charAt(i), sub, 100, 0, 30, false))
+          sentenceAry.push(new Pop_Words(words.charAt(i), sub+word_offset_X, 100+word_offset_Y, 30, false))
           sub += 20
         }
       }
@@ -556,18 +580,23 @@ function setup(){
   nightAry.push(new Gradient(0, 0, 0))
   nightAry.push(new Gradient(0, 0, 0))
 
+  cityAry = []
+  cityAry.push(new City('./city1.4d36683f.png', 0))
+  cityAry.push(new City('./city2.6284c22b.png', 40))
+  cityAry.push(new City('./city3.1c5f14f0.png', 80))
+
+
+
 }
 
 setup()
 
-var desc = "Megamind was a great movie"
-var description = new Fade_Words(desc, 0, 150, 0, 15, false)
+
 
 var currentLtr = 0
-//words.charAt()
 var active = true
 
-//
+
 let mousex, mousey
 c.canvas.addEventListener('mousemove', function(event){
    mousex = event.clientX - c.canvas.offsetLeft - 100,
@@ -578,10 +607,8 @@ c.canvas.addEventListener('mousemove', function(event){
 
 
 
-let cityAry = []
-cityAry.push(new City('./city1.4d36683f.png', 0))
-cityAry.push(new City('./city2.6284c22b.png', 40))
-cityAry.push(new City('./city3.1c5f14f0.png', 80))
+var dreg = new Text_Background(-50, -70, 'black', 300, 400,0)
+var dreger = new Text_Background(-60, -80, 'white', 350, 420,5)
 
 
 
@@ -609,6 +636,8 @@ function animate(){
       cityAry[i].update()
     }
 
+    dreger.update()
+    dreg.update()
 
 
     //c.drawImage(img, -100, 0, innerWidth, 800)
