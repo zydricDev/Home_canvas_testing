@@ -491,6 +491,93 @@ var Stars = /*#__PURE__*/function () {
   return Stars;
 }();
 
+var City = /*#__PURE__*/function () {
+  function City(source, delay) {
+    _classCallCheck(this, City);
+
+    this.source = source;
+    this.delay = delay;
+    this.frame = 0;
+    this.y = 500; //go to 50
+
+    this.bounce = false;
+    this.switch = false;
+    this.img = new Image();
+    this.img.src = this.source;
+  }
+
+  _createClass(City, [{
+    key: "draw",
+    value: function draw() {
+      if (this.frame >= this.delay) {
+        c.drawImage(this.img, -100, this.y, innerWidth, 800);
+      } else {
+        this.frame += 1;
+      }
+
+      if (this.y > 50 && this.frame >= this.delay && this.bounce == false) {
+        this.y -= 28.57;
+
+        if (this.y <= 50) {
+          this.y = 50;
+          this.bounce = true;
+        }
+      }
+
+      if (this.bounce == true) {
+        if (this.y >= 60 || this.switch == true) {
+          this.switch = true;
+
+          if (this.y > 50) {
+            this.y -= 2;
+          }
+        }
+
+        if (this.switch == false && this.y < 60) {
+          this.y += 2;
+        }
+      }
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+    }
+  }]);
+
+  return City;
+}();
+
+var Text_Background = /*#__PURE__*/function () {
+  function Text_Background(x, y, color, height, width) {
+    _classCallCheck(this, Text_Background);
+
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.height = height;
+    this.width = width;
+  }
+
+  _createClass(Text_Background, [{
+    key: "draw",
+    value: function draw() {
+      c.beginPath();
+      c.fillStyle = this.color;
+      c.fillRect(this.x, this.y, this.height, this.width); //c.fillRect(-50,-50,400,300)
+
+      c.closePath();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+    }
+  }]);
+
+  return Text_Background;
+}();
+
 var sentenceAry = [];
 var words = "Hi,I'm Zydric,web developer";
 var sub = 0;
@@ -559,21 +646,11 @@ function setup() {
     starAry.push(new Stars(genX * innerWidth, genY * innerHeight + 900, 'green', 0, innerWidth / 2 - 100, innerHeight / 2 + 290));
   }
 
-  duskAry = [];
-  duskAry.push(new Gradient(253, 125, 0));
-  duskAry.push(new Gradient(8, 109, 161));
-  duskAry.push(new Gradient(8, 109, 161));
-  duskAry.push(new Gradient(5, 54, 160));
   dayAry = [];
   dayAry.push(new Gradient(96, 213, 255));
   dayAry.push(new Gradient(78, 208, 255));
   dayAry.push(new Gradient(40, 202, 250));
   dayAry.push(new Gradient(0, 187, 255));
-  dawnAry = [];
-  dawnAry.push(new Gradient(255, 255, 255));
-  dawnAry.push(new Gradient(37, 127, 215));
-  dawnAry.push(new Gradient(0, 63, 160));
-  dawnAry.push(new Gradient(0, 18, 140));
   nightAry = [];
   nightAry.push(new Gradient(0, 12, 25));
   nightAry.push(new Gradient(0, 0, 0));
@@ -592,6 +669,10 @@ var mousex, mousey;
 c.canvas.addEventListener('mousemove', function (event) {
   mousex = event.clientX - c.canvas.offsetLeft - 100, mousey = event.clientY - c.canvas.offsetTop - 100; //document.getElementById('status').innerHTML = mousex +" | "+ mousey
 });
+var cityAry = [];
+cityAry.push(new City('./city1.4d36683f.png', 0));
+cityAry.push(new City('./city2.6284c22b.png', 40));
+cityAry.push(new City('./city3.1c5f14f0.png', 80));
 
 function animate() {
   requestAnimationFrame(animate);
@@ -609,6 +690,11 @@ function animate() {
         });
       }
     }
+
+    for (var i = cityAry.length - 1; i >= 0; i--) {
+      cityAry[i].update();
+    } //c.drawImage(img, -100, 0, innerWidth, 800)
+
   }
 
   for (var i = 0; i < sentenceAry.length; i++) {
@@ -662,7 +748,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65393" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61807" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

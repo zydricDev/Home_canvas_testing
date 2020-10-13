@@ -1,0 +1,32 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+#barn1{
+  position: absolute;
+  top: 150px;
+  background-color: transparent;
+  width: 100%;
+  z-index: 5;
+}
+
+#barn2{
+  position: absolute;
+  top: 150px;
+  background-color: transparent;
+  width: 100%;
+  z-index: 4;
+}
+
+#barn3{
+  position: absolute;
+  top: 150px;
+  background-color: transparent;
+  width: 100%;
+  z-index: 3;
+}
+
+
+/*# sourceMappingURL=/styles.8986bff4.css.map */
