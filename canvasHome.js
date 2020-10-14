@@ -33,21 +33,11 @@ class Pop_Words {
   }
 
   draw(){
-    //&& this.opacDelay >= 0
-    //if(this.day == false){
-    if(sentenceAry[sentenceAry.length-1].drawn == true){
-      c.fillStyle = "white";
-    }else{c.fillStyle = "black";}
-
-    //}else {c.fillStyle = "blue";}
+    c.fillStyle = `rgba(255, 255, 255, ${this.opac})`
 
     if(cycleAry[0].frames == 550){
       this.day = !this.day
     }
-
-
-
-
 
 
     if(this.opac < 1){
@@ -57,9 +47,6 @@ class Pop_Words {
       this.doResize = false
       this.drawn = true
     }
-
-
-    c.globalAlpha = this.opac;
 
     c.font = this.size+'px Bungee'
 
@@ -127,14 +114,13 @@ class Fade_Words {
   }
 
   draw(){
-    c.fillStyle = "white";
+    c.fillStyle = `rgb(255, 255, 255, ${this.opac})`;
     if(this.opac < 1 && this.drawn == false){
       this.opac += 0.03
     }
     if(this.opac >= 1 && this.drawn == false){
       this.drawn = true
     }
-    c.globalAlpha =  this.opac
     c.font = this.size+'px Bungee'
     c.fillText(this.ltr, this.x, this.y, 500)
     c.fillStyle = "black";
@@ -159,7 +145,6 @@ class Cycle {
     this.frames = 0
     this.timer = 0
 
-    this.opacity = 0
     this.day = true
 
     this.originalCycle = onCycle
@@ -170,17 +155,8 @@ class Cycle {
   }
   draw(){
     c.beginPath()
-    c.globalAlpha = this.opacity
-    if(this.opacity < 1){
-      this.opacity += 0.05
-    }
 
-    //newArc starts at pi for the top half
-    //bottom half starts at 2pi
-    c.arc(innerWidth/2-100, innerHeight/2+290, this.radius, this.prevArc, this.newArc , false)
-
-
-
+    c.arc(canvas.width/2-100, canvas.height/2+290, this.radius, this.prevArc, this.newArc , false)
 
     let gradient = c.createLinearGradient(0, 300, 0, 0)
     if(this.onCycle == 1){
@@ -425,7 +401,8 @@ class City{
   }
   draw(){
     if(this.frame >= this.delay){
-      c.drawImage(this.img, -100, this.y, innerWidth, 800)
+
+      c.drawImage(this.img, -100, this.y, canvas.width, 800)
     }else{ this.frame += 1 }
 
     if(this.y > 50 && this.frame >= this.delay && this.bounce == false){
@@ -494,6 +471,61 @@ class Text_Background{
   }
 }
 
+class Logo_Background{
+  constructor(x, y, height, width, angle){
+    this.x = x
+    this.y = y
+
+    this.height = height
+    this.width = width
+    this.angle = angle
+  }
+  draw(){
+    c.beginPath()
+    c.fillStyle = 'white'
+    c.moveTo(this.x,this.y)
+    c.lineTo(this.x + this.width, this.y)
+    c.lineTo(this.x + this.width, this.y + this.height)
+    c.lineTo(this.x, this.y + this.height)
+    c.stroke()
+    c.fill()
+    c.closePath()
+
+    c.beginPath()
+    c.fillStyle = 'black'
+    c.moveTo(this.x + this.width/15,this.y + this.height/10)
+    c.lineTo(this.x + this.width - this.width/10, this.y + this.width/15)
+    c.lineTo(this.x + this.width - this.width/15, this.y + this.height - this.width/7.5)
+    c.lineTo(this.x + this.width/10, this.y + this.height - this.height/10)
+    c.stroke()
+    c.fill()
+    c.closePath()
+  }
+  update(){
+    this.draw()
+  }
+}
+
+class Default_Background{
+  constructor(){
+    this.gradient = c.createLinearGradient(0, 300, 0, 0)
+  }
+  draw(){
+    c.beginPath()
+    c.rect(-100, -100, canvas.width, canvas.height);
+    this.gradient.addColorStop(0, `rgb(${dayAry[0].r},${dayAry[0].g},${dayAry[0].b})`);
+    this.gradient.addColorStop(0.24, `rgb(${dayAry[1].r},${dayAry[1].g},${dayAry[1].b})`);
+    this.gradient.addColorStop(0.42, `rgb(${dayAry[2].r},${dayAry[2].g},${dayAry[2].b})`);
+    this.gradient.addColorStop(1, `rgb(${dayAry[3].r},${dayAry[3].g},${dayAry[3].b})`);
+    c.fillStyle = this.gradient
+    c.fill()
+    c.closePath()
+  }
+  update(){
+    this.draw()
+  }
+
+}
 
 function setup(){
   var sub = 0
@@ -553,8 +585,8 @@ function setup(){
     }
   }
   cycleAry = []
-  cycleAry.push(new Cycle(1500, Math.PI, 0, 3, false))
-  cycleAry.push(new Cycle(1500, 0, Math.PI, 1, true))
+  cycleAry.push(new Cycle(1500 * 4, Math.PI, 0, 3, false))
+  cycleAry.push(new Cycle(1500 * 4, 0, Math.PI, 1, true))
 
   //starAry.push(new Cycle(1500,'yellow',0,Math.PI))
 
@@ -565,7 +597,7 @@ function setup(){
     let smallR = Math.sqrt(Math.random()) * bigR
     let genX = smallR * Math.cos(phi)
     let genY = smallR * Math.sin(phi)
-    starAry.push(new Stars(genX * innerWidth, genY * innerHeight + 900, 'green', 0, innerWidth/2-100, innerHeight/2+290))
+    starAry.push(new Stars(genX * canvas.width, genY * canvas.height + 900, 'green', 0, canvas.width/2-100, canvas.height/2+290))
   }
 
   dayAry = []
@@ -586,7 +618,13 @@ function setup(){
   cityAry.push(new City('./city3.1c5f14f0.png', 80))
 
 
+  boxLayer1 = new Text_Background(-50, -70, 'black', 300, 400,0)
+  boxLayer2 = new Text_Background(-60, -80, 'white', 350, 420,5)
+  def_background = new Default_Background()
+  drake = new Image();
 
+  drake.src = './logo.png'
+  smart = new Logo_Background(600,-15,200,200)
 }
 
 setup()
@@ -607,9 +645,6 @@ c.canvas.addEventListener('mousemove', function(event){
 
 
 
-var dreg = new Text_Background(-50, -70, 'black', 300, 400,0)
-var dreger = new Text_Background(-60, -80, 'white', 350, 420,5)
-
 
 
 
@@ -620,28 +655,27 @@ function animate(){
   c.save()
   c.translate(100,100)
 
+  def_background.update()
 
-
-
-  if(sentenceAry[sentenceAry.length-1].drawn == true){
-    for(var i=0; i<cycleAry.length; i++){
-      cycleAry[i].update()
-      if(i==0){
-        starAry.forEach((stars)=>{
-          stars.update()
-        })
-      }
+  for(var i=0; i<cycleAry.length; i++){
+    cycleAry[i].update()
+    if(i==0){
+      starAry.forEach((stars)=>{
+        stars.update()
+      })
     }
-    for(var i=cityAry.length-1; i>=0; i--){
-      cityAry[i].update()
-    }
-
-    dreger.update()
-    dreg.update()
-
-
-    //c.drawImage(img, -100, 0, innerWidth, 800)
   }
+  for(var i=cityAry.length-1; i>=0; i--){
+    cityAry[i].update()
+  }
+
+  boxLayer2.update()
+  boxLayer1.update()
+
+  smart.update()
+
+  c.drawImage(drake, canvas.width/2 - 250, 20, 300, 100)
+
 
   for(var i=0; i<sentenceAry.length; i++){
     sentenceAry[i].mouseX = mousex
