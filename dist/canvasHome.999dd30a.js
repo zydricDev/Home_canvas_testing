@@ -156,14 +156,7 @@ var Pop_Words = /*#__PURE__*/function () {
   _createClass(Pop_Words, [{
     key: "draw",
     value: function draw() {
-      //&& this.opacDelay >= 0
-      //if(this.day == false){
-      if (sentenceAry[sentenceAry.length - 1].drawn == true) {
-        c.fillStyle = "white";
-      } else {
-        c.fillStyle = "black";
-      } //}else {c.fillStyle = "blue";}
-
+      c.fillStyle = "rgba(255, 255, 255, ".concat(this.opac, ")");
 
       if (cycleAry[0].frames == 550) {
         this.day = !this.day;
@@ -178,7 +171,6 @@ var Pop_Words = /*#__PURE__*/function () {
         this.drawn = true;
       }
 
-      c.globalAlpha = this.opac;
       c.font = this.size + 'px Bungee';
 
       if (this.drawn == false && this.opac < 0.5) {
@@ -239,7 +231,7 @@ var Fade_Words = /*#__PURE__*/function () {
   _createClass(Fade_Words, [{
     key: "draw",
     value: function draw() {
-      c.fillStyle = "white";
+      c.fillStyle = "rgb(255, 255, 255, ".concat(this.opac, ")");
 
       if (this.opac < 1 && this.drawn == false) {
         this.opac += 0.03;
@@ -249,7 +241,6 @@ var Fade_Words = /*#__PURE__*/function () {
         this.drawn = true;
       }
 
-      c.globalAlpha = this.opac;
       c.font = this.size + 'px Bungee';
       c.fillText(this.ltr, this.x, this.y, 500);
       c.fillStyle = "black";
@@ -275,7 +266,6 @@ var Cycle = /*#__PURE__*/function () {
     this.pause = false;
     this.frames = 0;
     this.timer = 0;
-    this.opacity = 0;
     this.day = true;
     this.originalCycle = onCycle;
     this.tracker = 180;
@@ -287,15 +277,7 @@ var Cycle = /*#__PURE__*/function () {
     key: "draw",
     value: function draw() {
       c.beginPath();
-      c.globalAlpha = this.opacity;
-
-      if (this.opacity < 1) {
-        this.opacity += 0.05;
-      } //newArc starts at pi for the top half
-      //bottom half starts at 2pi
-
-
-      c.arc(innerWidth / 2 - 100, innerHeight / 2 + 290, this.radius, this.prevArc, this.newArc, false);
+      c.arc(canvas.width / 2 - 100, canvas.height / 2 + 290, this.radius, this.prevArc, this.newArc, false);
       var gradient = c.createLinearGradient(0, 300, 0, 0);
 
       if (this.onCycle == 1) {
@@ -515,7 +497,7 @@ var City = /*#__PURE__*/function () {
     key: "draw",
     value: function draw() {
       if (this.frame >= this.delay) {
-        c.drawImage(this.img, -100, this.y, innerWidth, 800);
+        c.drawImage(this.img, -100, this.y, canvas.width, 800);
       } else {
         this.frame += 1;
       }
@@ -607,6 +589,79 @@ var Text_Background = /*#__PURE__*/function () {
   return Text_Background;
 }();
 
+var Logo_Background = /*#__PURE__*/function () {
+  function Logo_Background(x, y, height, width, angle) {
+    _classCallCheck(this, Logo_Background);
+
+    this.x = x;
+    this.y = y;
+    this.height = height;
+    this.width = width;
+    this.angle = angle;
+  }
+
+  _createClass(Logo_Background, [{
+    key: "draw",
+    value: function draw() {
+      c.beginPath();
+      c.fillStyle = 'white';
+      c.moveTo(this.x, this.y);
+      c.lineTo(this.x + this.width, this.y);
+      c.lineTo(this.x + this.width, this.y + this.height);
+      c.lineTo(this.x, this.y + this.height);
+      c.stroke();
+      c.fill();
+      c.closePath();
+      c.beginPath();
+      c.fillStyle = 'black';
+      c.moveTo(this.x + this.width / 15, this.y + this.height / 10);
+      c.lineTo(this.x + this.width - this.width / 10, this.y + this.width / 15);
+      c.lineTo(this.x + this.width - this.width / 15, this.y + this.height - this.width / 7.5);
+      c.lineTo(this.x + this.width / 10, this.y + this.height - this.height / 10);
+      c.stroke();
+      c.fill();
+      c.closePath();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+    }
+  }]);
+
+  return Logo_Background;
+}();
+
+var Default_Background = /*#__PURE__*/function () {
+  function Default_Background() {
+    _classCallCheck(this, Default_Background);
+
+    this.gradient = c.createLinearGradient(0, 300, 0, 0);
+  }
+
+  _createClass(Default_Background, [{
+    key: "draw",
+    value: function draw() {
+      c.beginPath();
+      c.rect(-100, -100, canvas.width, canvas.height);
+      this.gradient.addColorStop(0, "rgb(".concat(dayAry[0].r, ",").concat(dayAry[0].g, ",").concat(dayAry[0].b, ")"));
+      this.gradient.addColorStop(0.24, "rgb(".concat(dayAry[1].r, ",").concat(dayAry[1].g, ",").concat(dayAry[1].b, ")"));
+      this.gradient.addColorStop(0.42, "rgb(".concat(dayAry[2].r, ",").concat(dayAry[2].g, ",").concat(dayAry[2].b, ")"));
+      this.gradient.addColorStop(1, "rgb(".concat(dayAry[3].r, ",").concat(dayAry[3].g, ",").concat(dayAry[3].b, ")"));
+      c.fillStyle = this.gradient;
+      c.fill();
+      c.closePath();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+    }
+  }]);
+
+  return Default_Background;
+}();
+
 function setup() {
   var sub = 0;
   sentenceAry = [];
@@ -665,8 +720,8 @@ function setup() {
   }
 
   cycleAry = [];
-  cycleAry.push(new Cycle(1500, Math.PI, 0, 3, false));
-  cycleAry.push(new Cycle(1500, 0, Math.PI, 1, true)); //starAry.push(new Cycle(1500,'yellow',0,Math.PI))
+  cycleAry.push(new Cycle(1500 * 4, Math.PI, 0, 3, false));
+  cycleAry.push(new Cycle(1500 * 4, 0, Math.PI, 1, true)); //starAry.push(new Cycle(1500,'yellow',0,Math.PI))
 
   starAry = [];
 
@@ -676,7 +731,7 @@ function setup() {
     var smallR = Math.sqrt(Math.random()) * bigR;
     var genX = smallR * Math.cos(phi);
     var genY = smallR * Math.sin(phi);
-    starAry.push(new Stars(genX * innerWidth, genY * innerHeight + 900, 'green', 0, innerWidth / 2 - 100, innerHeight / 2 + 290));
+    starAry.push(new Stars(genX * canvas.width, genY * canvas.height + 900, 'green', 0, canvas.width / 2 - 100, canvas.height / 2 + 290));
   }
 
   dayAry = [];
@@ -693,6 +748,12 @@ function setup() {
   cityAry.push(new City('./city1.4d36683f.png', 0));
   cityAry.push(new City('./city2.6284c22b.png', 40));
   cityAry.push(new City('./city3.1c5f14f0.png', 80));
+  boxLayer1 = new Text_Background(-50, -70, 'black', 300, 400, 0);
+  boxLayer2 = new Text_Background(-60, -80, 'white', 350, 420, 5);
+  def_background = new Default_Background();
+  drake = new Image();
+  drake.src = './logo.png';
+  smart = new Logo_Background(600, -15, 200, 200);
 }
 
 setup();
@@ -702,33 +763,32 @@ var mousex, mousey;
 c.canvas.addEventListener('mousemove', function (event) {
   mousex = event.clientX - c.canvas.offsetLeft - 100, mousey = event.clientY - c.canvas.offsetTop - 100; //document.getElementById('status').innerHTML = mousex +" | "+ mousey
 });
-var dreg = new Text_Background(-50, -70, 'black', 300, 400, 0);
-var dreger = new Text_Background(-60, -80, 'white', 350, 420, 5);
 
 function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, innerWidth, innerHeight);
   c.save();
   c.translate(100, 100);
+  def_background.update();
 
-  if (sentenceAry[sentenceAry.length - 1].drawn == true) {
-    for (var i = 0; i < cycleAry.length; i++) {
-      cycleAry[i].update();
+  for (var i = 0; i < cycleAry.length; i++) {
+    cycleAry[i].update();
 
-      if (i == 0) {
-        starAry.forEach(function (stars) {
-          stars.update();
-        });
-      }
+    if (i == 0) {
+      starAry.forEach(function (stars) {
+        stars.update();
+      });
     }
-
-    for (var i = cityAry.length - 1; i >= 0; i--) {
-      cityAry[i].update();
-    }
-
-    dreger.update();
-    dreg.update(); //c.drawImage(img, -100, 0, innerWidth, 800)
   }
+
+  for (var i = cityAry.length - 1; i >= 0; i--) {
+    cityAry[i].update();
+  }
+
+  boxLayer2.update();
+  boxLayer1.update();
+  smart.update();
+  c.drawImage(drake, canvas.width / 2 - 250, 20, 300, 100);
 
   for (var i = 0; i < sentenceAry.length; i++) {
     sentenceAry[i].mouseX = mousex;
@@ -781,7 +841,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61807" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60505" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
