@@ -264,7 +264,7 @@ var Cycle = /*#__PURE__*/function () {
     this.prevArc = prevArc;
     this.onTop = onTop;
     this.pause = false;
-    this.frames = 0;
+    this.frames = 350;
     this.timer = 0;
     this.day = true;
     this.originalCycle = onCycle;
@@ -446,26 +446,13 @@ var Stars = /*#__PURE__*/function () {
       c.fill();
       c.shadowBlur = 0;
       c.closePath();
-      /**
-      c.moveTo(this.x, this.y);
-      c.lineTo(this.pivotX, this.pivotY);
-      c.stroke();
-        c.beginPath()
-      c.arc(this.pivotX, this.pivotY, 5, 0, Math.PI*2, false)
-      c.fillStyle = 'red'
-      c.fill()
-      c.closePath()
-      **/
-
       var xSub = this.x - this.pivotX;
       var ySub = this.y - this.pivotY;
       this.radians = 0.01745 * (2 * this.uniqueSpeed);
       var xSub2 = xSub * Math.cos(this.radians) - Math.sin(this.radians) * ySub;
       var ySub2 = xSub * Math.sin(this.radians) + Math.cos(this.radians) * ySub;
       this.x = xSub2 + this.pivotX;
-      this.y = ySub2 + this.pivotY; //this.x = this.x + Math.cos(this.radians) * 10
-      //this.y = this.y + Math.sin(this.radians) * 10
-
+      this.y = ySub2 + this.pivotY;
       c.fillStyle = 'black';
     }
   }, {
@@ -662,6 +649,60 @@ var Default_Background = /*#__PURE__*/function () {
   return Default_Background;
 }();
 
+var Mascot_Blink = /*#__PURE__*/function () {
+  function Mascot_Blink(x, y, height, width) {
+    _classCallCheck(this, Mascot_Blink);
+
+    this.x = x;
+    this.y = y;
+    this.height = height;
+    this.width = width;
+    this.blink = false;
+    this.timer = 0;
+    this.timelag = 0;
+    this.face1 = new Image();
+    this.face1.src = './mascot1.png';
+    this.face2 = new Image();
+    this.face2.src = './mascot2.png';
+  }
+
+  _createClass(Mascot_Blink, [{
+    key: "draw",
+    value: function draw() {
+      if (this.timer == 1) {
+        this.timelag = 50 + Math.random() * 400;
+      }
+
+      if (this.blink == false && this.timer < this.timelag) {
+        c.drawImage(this.face1, this.x, this.y, this.width, this.height);
+      }
+
+      if (this.timer >= this.timelag) {
+        this.blink = true;
+        this.timer = 0;
+      }
+
+      if (this.blink == true) {
+        c.drawImage(this.face2, this.x, this.y, this.width, this.height);
+
+        if (this.timer >= 10) {
+          this.blink = false;
+          this.timer = 0;
+        }
+      }
+
+      this.timer += 1;
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.draw();
+    }
+  }]);
+
+  return Mascot_Blink;
+}();
+
 function setup() {
   var sub = 0;
   sentenceAry = [];
@@ -748,12 +789,11 @@ function setup() {
   cityAry.push(new City('./city1.4d36683f.png', 0));
   cityAry.push(new City('./city2.6284c22b.png', 40));
   cityAry.push(new City('./city3.1c5f14f0.png', 80));
-  boxLayer1 = new Text_Background(-50, -70, 'black', 300, 400, 0);
-  boxLayer2 = new Text_Background(-60, -80, 'white', 350, 420, 5);
+  boxLayer1 = new Text_Background(-50 + word_offset_X, -70 + word_offset_Y, 'black', 300, 400, 0);
+  boxLayer2 = new Text_Background(-60 + word_offset_X, -80 + word_offset_Y, 'white', 350, 420, 5);
   def_background = new Default_Background();
-  drake = new Image();
-  drake.src = './logo.png';
-  smart = new Logo_Background(600, -15, 200, 200);
+  logo_frame = new Logo_Background(600, -15, 200, 200);
+  mascot = new Mascot_Blink(625, 10, 150, 150);
 }
 
 setup();
@@ -787,8 +827,8 @@ function animate() {
 
   boxLayer2.update();
   boxLayer1.update();
-  smart.update();
-  c.drawImage(drake, canvas.width / 2 - 250, 20, 300, 100);
+  logo_frame.update();
+  mascot.update();
 
   for (var i = 0; i < sentenceAry.length; i++) {
     sentenceAry[i].mouseX = mousex;
@@ -841,7 +881,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60505" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65091" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
