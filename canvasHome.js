@@ -142,7 +142,7 @@ class Cycle {
     this.onTop = onTop
 
     this.pause = false
-    this.frames = 0
+    this.frames = 350
     this.timer = 0
 
     this.day = true
@@ -351,17 +351,7 @@ class Stars{
     c.shadowBlur = 0
     c.closePath()
 
-    /**
-    c.moveTo(this.x, this.y);
-    c.lineTo(this.pivotX, this.pivotY);
-    c.stroke();
 
-    c.beginPath()
-    c.arc(this.pivotX, this.pivotY, 5, 0, Math.PI*2, false)
-    c.fillStyle = 'red'
-    c.fill()
-    c.closePath()
-    **/
     var xSub = this.x - this.pivotX
     var ySub = this.y - this.pivotY
 
@@ -372,9 +362,6 @@ class Stars{
 
     this.x = xSub2 + this.pivotX
     this.y = ySub2 + this.pivotY
-    //this.x = this.x + Math.cos(this.radians) * 10
-    //this.y = this.y + Math.sin(this.radians) * 10
-
 
 
     c.fillStyle = 'black'
@@ -527,6 +514,51 @@ class Default_Background{
 
 }
 
+class Mascot_Blink{
+  constructor(x, y, height, width){
+    this.x = x
+    this.y = y
+    this.height = height
+    this.width = width
+
+    this.blink = false
+    this.timer = 0
+    this.timelag = 0
+
+    this.face1 = new Image();
+    this.face1.src = './mascot1.png'
+
+    this.face2 = new Image();
+    this.face2.src = './mascot2.png'
+
+
+  }
+  draw(){
+    if(this.timer == 1){ this.timelag = 50 + Math.random() * 400 }
+
+    if(this.blink == false && this.timer < this.timelag){
+      c.drawImage(this.face1, this.x, this.y, this.width, this.height)
+    }
+    if(this.timer >= this.timelag){
+      this.blink = true
+      this.timer = 0
+    }
+
+    if(this.blink == true){
+      c.drawImage(this.face2, this.x, this.y, this.width, this.height)
+      if(this.timer >= 10){
+        this.blink = false
+        this.timer = 0
+      }
+    }
+    this.timer += 1
+
+  }
+  update(){
+    this.draw()
+  }
+}
+
 function setup(){
   var sub = 0
   sentenceAry = []
@@ -618,13 +650,12 @@ function setup(){
   cityAry.push(new City('./city3.1c5f14f0.png', 80))
 
 
-  boxLayer1 = new Text_Background(-50, -70, 'black', 300, 400,0)
-  boxLayer2 = new Text_Background(-60, -80, 'white', 350, 420,5)
+  boxLayer1 = new Text_Background(-50 + word_offset_X, -70 + word_offset_Y, 'black', 300, 400,0)
+  boxLayer2 = new Text_Background(-60 + word_offset_X, -80 + word_offset_Y, 'white', 350, 420,5)
   def_background = new Default_Background()
-  drake = new Image();
 
-  drake.src = './logo.png'
-  smart = new Logo_Background(600,-15,200,200)
+  logo_frame = new Logo_Background(600,-15,200,200)
+  mascot = new Mascot_Blink(625, 10, 150,150)
 }
 
 setup()
@@ -672,9 +703,9 @@ function animate(){
   boxLayer2.update()
   boxLayer1.update()
 
-  smart.update()
+  logo_frame.update()
+  mascot.update()
 
-  c.drawImage(drake, canvas.width/2 - 250, 20, 300, 100)
 
 
   for(var i=0; i<sentenceAry.length; i++){
