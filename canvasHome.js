@@ -4,6 +4,14 @@ const c = canvas.getContext('2d')
 canvas.width = innerWidth
 canvas.height = innerHeight
 
+
+function onWindowResize(){
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', onWindowResize, false);
+
 class Gradient{
   constructor(r,g,b){
     this.r = r
@@ -121,7 +129,7 @@ class Fade_Words {
     if(this.opac >= 1 && this.drawn == false){
       this.drawn = true
     }
-    c.font = this.size+'px Bungee'
+    c.font = this.size+'px Roboto Slab'
     c.fillText(this.ltr, this.x, this.y, 500)
     c.fillStyle = "black";
   }
@@ -364,6 +372,8 @@ class Stars{
     this.y = ySub2 + this.pivotY
 
 
+
+
     c.fillStyle = 'black'
   }
 
@@ -389,7 +399,7 @@ class City{
   draw(){
     if(this.frame >= this.delay){
 
-      c.drawImage(this.img, -100, this.y, canvas.width, 800)
+      c.drawImage(this.img, -100, this.y, window.innerWidth, window.innerHeight)
     }else{ this.frame += 1 }
 
     if(this.y > 50 && this.frame >= this.delay && this.bounce == false){
@@ -449,8 +459,7 @@ class Text_Background{
     c.strokeStyle = "transparent";
     c.stroke()
     c.fill()
-    //c.fillRect(this.x, this.y, this.height, this.width)
-    //c.fillRect(-50,-50,400,300)
+
     c.closePath()
   }
   update(){
@@ -565,11 +574,12 @@ function setup(){
   starAry = []
   words = "Hi,I'm Zydric,web developer"
 
-  desc = "Megamind was a great movie"
-  description = new Fade_Words(desc, 0, 150, 0, 15, false)
+  desc = "Front-End & Web Application Developer"
+  word_offset_X = 100
+  word_offset_Y = 50
 
-  word_offset_X = 0
-  word_offset_Y = 0
+  description = new Fade_Words(desc, word_offset_X, 150+word_offset_Y, 0, 15, false)
+
   for(var i=0; i<words.length; i++){
 
     if(i==0){
@@ -620,7 +630,7 @@ function setup(){
   cycleAry.push(new Cycle(1500 * 4, Math.PI, 0, 3, false))
   cycleAry.push(new Cycle(1500 * 4, 0, Math.PI, 1, true))
 
-  //starAry.push(new Cycle(1500,'yellow',0,Math.PI))
+
 
   starAry = []
   for(var i=0; i<100; i++){
@@ -645,14 +655,15 @@ function setup(){
   nightAry.push(new Gradient(0, 0, 0))
 
   cityAry = []
-  cityAry.push(new City('./city1.4d36683f.png', 0))
-  cityAry.push(new City('./city2.6284c22b.png', 40))
-  cityAry.push(new City('./city3.1c5f14f0.png', 80))
+  cityAry.push(new City('./city1.png', 0))
+  cityAry.push(new City('./city2.png', 40))
+  cityAry.push(new City('./city3.png', 80))
 
 
-  boxLayer1 = new Text_Background(-50 + word_offset_X, -70 + word_offset_Y, 'black', 300, 400,0)
-  boxLayer2 = new Text_Background(-60 + word_offset_X, -80 + word_offset_Y, 'white', 350, 420,5)
+  boxLayer1 = new Text_Background(-50+word_offset_X, -70+word_offset_Y, 'black', 300, 400,0)
+  boxLayer2 = new Text_Background(-60+word_offset_X, -80+word_offset_Y, 'white', 350, 420,5)
   def_background = new Default_Background()
+
 
   logo_frame = new Logo_Background(600,-15,200,200)
   mascot = new Mascot_Blink(625, 10, 150,150)
@@ -675,60 +686,58 @@ c.canvas.addEventListener('mousemove', function(event){
 })
 
 
-
-
-
-
 function animate(){
-  requestAnimationFrame(animate)
-  c.clearRect(0,0, innerWidth, innerHeight)
+  if(document.getElementById('hidden').innerHTML === "Completed"){
+    requestAnimationFrame(animate)
+    c.clearRect(0,0, innerWidth, innerHeight)
 
-  c.save()
-  c.translate(100,100)
+    c.save()
+    c.translate(100,100)
 
-  def_background.update()
+    def_background.update()
 
-  for(var i=0; i<cycleAry.length; i++){
-    cycleAry[i].update()
-    if(i==0){
-      starAry.forEach((stars)=>{
-        stars.update()
-      })
-    }
-  }
-  for(var i=cityAry.length-1; i>=0; i--){
-    cityAry[i].update()
-  }
-
-  boxLayer2.update()
-  boxLayer1.update()
-
-  logo_frame.update()
-  mascot.update()
-
-
-
-  for(var i=0; i<sentenceAry.length; i++){
-    sentenceAry[i].mouseX = mousex
-    sentenceAry[i].mouseY = mousey
-
-    if(sentenceAry[i].doResize == false && currentLtr == i){
-      currentLtr = i+1
-      if(currentLtr < sentenceAry.length){
-        sentenceAry[currentLtr].doResize = true
+    for(var i=0; i<cycleAry.length; i++){
+      cycleAry[i].update()
+      if(i==0){
+        starAry.forEach((stars)=>{
+          stars.update()
+        })
       }
     }
-    sentenceAry[i].update()
+    for(var i=cityAry.length-1; i>=0; i--){
+      cityAry[i].update()
+    }
+
+    boxLayer2.update()
+    boxLayer1.update()
+
+    logo_frame.update()
+    mascot.update()
+
+
+    for(var i=0; i<sentenceAry.length; i++){
+      sentenceAry[i].mouseX = mousex
+      sentenceAry[i].mouseY = mousey
+
+      if(sentenceAry[i].doResize == false && currentLtr == i){
+        currentLtr = i+1
+        if(currentLtr < sentenceAry.length){
+          sentenceAry[currentLtr].doResize = true
+        }
+      }
+      sentenceAry[i].update()
+    }
+
+    if(sentenceAry[sentenceAry.length-1].drawn == true){
+      description.update()
+
+    }
+
+
+
+    c.restore()
+
   }
-
-  if(sentenceAry[sentenceAry.length-1].drawn == true){
-    description.update()
-
-  }
-
-
-
-  c.restore()
 
 }
 animate()
