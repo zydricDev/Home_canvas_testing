@@ -561,9 +561,7 @@ var Text_Background = /*#__PURE__*/function () {
       c.lineTo(this.x, this.y);
       c.strokeStyle = "transparent";
       c.stroke();
-      c.fill(); //c.fillRect(this.x, this.y, this.height, this.width)
-      //c.fillRect(-50,-50,400,300)
-
+      c.fill();
       c.closePath();
     }
   }, {
@@ -577,14 +575,13 @@ var Text_Background = /*#__PURE__*/function () {
 }();
 
 var Logo_Background = /*#__PURE__*/function () {
-  function Logo_Background(x, y, height, width, angle) {
+  function Logo_Background(x, y, height, width) {
     _classCallCheck(this, Logo_Background);
 
     this.x = x;
     this.y = y;
     this.height = height;
     this.width = width;
-    this.angle = angle;
   }
 
   _createClass(Logo_Background, [{
@@ -881,7 +878,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65091" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52234" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
